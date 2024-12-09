@@ -9,6 +9,7 @@ import { getAnalytics, provideAnalytics, ScreenTrackingService, UserTrackingServ
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getPerformance, providePerformance } from '@angular/fire/performance';
 import { environment } from '../environments/environment';
+import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,6 +23,7 @@ export const appConfig: ApplicationConfig = {
     ScreenTrackingService, 
     UserTrackingService, 
     provideFirestore(() => getFirestore()), 
-    providePerformance(() => getPerformance())
+    providePerformance(() => getPerformance()),
+    provideHttpClient()
   ]
 };
