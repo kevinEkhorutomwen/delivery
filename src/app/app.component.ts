@@ -12,7 +12,7 @@ import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 export class AppComponent {
   
   constructor(private auth: Auth) {
-    this.registerUser("Kevin.Ekhorutomwen@yahoo.de", "Qweasd123");
+    // this.registerUser("Kevin.Ekhorutomwen@yahoo.de", "Qweasd123");
   }
 
   async registerUser(email: string, password: string) {
