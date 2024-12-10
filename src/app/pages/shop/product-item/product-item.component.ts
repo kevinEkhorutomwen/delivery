@@ -27,6 +27,5 @@ export class ProductItemComponent {
   cartService = inject(CartService);
 
   ngOnInit() {
-    console.log(this.product)
   }
 }

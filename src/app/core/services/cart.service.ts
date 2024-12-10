@@ -1,14 +1,15 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Cart, CartItem, Coupon } from '../../shared/models/cart';
+import { computed, Injectable, signal } from '@angular/core';
+import { Cart, CartItem } from '../../shared/models/cart';
 import { Product } from '../../shared/models/product';
-import { firstValueFrom, map, tap } from 'rxjs';
 import { DeliveryMethod } from '../../shared/models/delivery-method';
+import { collection, deleteDoc, doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
+  constructor(private firestore: Firestore){}
+  collectionName = "cart";
   cart = signal<Cart | null>(null);
   itemCount = computed(() => {
     return this.cart()?.items.reduce((sum, item) => sum + item.quantity, 0)
@@ -42,14 +43,27 @@ export class CartService {
   })
 
   getCart(id: string) {
-    
+    const itemRef = doc(this.firestore, `${this.collectionName}/${id}`);
+    let a = docData(itemRef, { idField: 'id' });
+    a.subscribe({
+      next: (cart: Cart) => {
+        this.cart.set(cart)
+      }
+    })
   }
 
-  setCart(cart: Cart) {
+  async setCart(cart: Cart) {
+    const { id, ...cartData } = cart;
+    const collectionRef = collection(this.firestore, this.collectionName);
+    const docRef = doc(collectionRef, id);
+    await setDoc(docRef, JSON.parse(JSON.stringify(cartData)));
+    const newCart = {...cart};
+    this.cart.set(newCart);
   }
 
-  applyDiscount(code: string) {
-  }
+  // applyDiscount(code: string) {
+  //   return this.http.get<Coupon>(this.baseUrl + 'coupons/' + code);
+  // }
 
   async addItemToCart(item: CartItem | Product, quantity = 1) {
     const cart = this.cart() ?? this.createCart();
@@ -57,9 +71,10 @@ export class CartService {
       item = this.mapProductToCartItem(item);
     }
     cart.items = this.addOrUpdateItem(cart.items, item, quantity);
+    await this.setCart(cart);
   }
 
-async removeItemFromCart(productId: number, quantity = 1) {
+async removeItemFromCart(productId: string, quantity = 1) {
     const cart = this.cart();
     if (!cart) return;
     const index = cart.items.findIndex(x => x.productId === productId);
@@ -72,11 +87,18 @@ async removeItemFromCart(productId: number, quantity = 1) {
       if (cart.items.length === 0) {
         this.deleteCart();
       } else {
+        this.setCart(cart);
       }
     }
   }
 
-  deleteCart() {
+  async deleteCart() {
+    try {
+      const docRef = doc(this.firestore, `cart/${this.cart()?.id}`);
+      
+      await deleteDoc(docRef);
+      this.cart.set(null);
+    } catch{}
   }
 
   private addOrUpdateItem(items: CartItem[], item: CartItem, quantity: number): CartItem[] {
@@ -111,5 +133,4 @@ async removeItemFromCart(productId: number, quantity = 1) {
     localStorage.setItem('cart_id', cart.id);
     return cart;
   }
-
 }
