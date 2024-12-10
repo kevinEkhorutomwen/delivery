@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { OrderParams } from '../../shared/models/order-params';
 import { Order } from '../../shared/models/order';
-import { collection, collectionData, doc, Firestore, query, updateDoc, where } from '@angular/fire/firestore';
+import { collection, collectionData, doc, docData, Firestore, query, updateDoc, where } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -24,8 +24,10 @@ export class AdminService {
     return collectionData(q, { idField: 'id' }); // idField fügt die Dokument-ID hinzu
   }
 
-  getOrder(id: number) {
-    // return this.http.get<Order>(this.baseUrl + 'admin/orders/' + id);
+
+  getOrder(id: string): Observable<Order> {
+    const itemRef = doc(this.firestore, `${this.collectionName}/${id}`);
+    return docData(itemRef, { idField: 'id' });
   }
 
   refundOrder(docId: string): Promise<void> {
