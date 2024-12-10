@@ -42,9 +42,11 @@ export class RegisterComponent {
     password: ['', Validators.required],
   });
 
-  onSubmit() {this.accountService.register(this.registerForm.value.email!, this.registerForm.value.password!)
+  onSubmit() {
+    this.accountService.register(this.registerForm.value.email!, this.registerForm.value.password!)
+    .then(uId => this.accountService.createUser(uId, this.registerForm.value.email!, this.registerForm.value.firstName!,this.registerForm.value.lastName!))
     .then(() => this.router.navigateByUrl('/account/login'))
-    .then(() => this.snack.success('Registration successful - you can now login'))
+    .then(() => this.snack.success('Registrierung erfolgreich'))
     .catch((e) => {
       var error = e as FirebaseError;
       var message: string;
