@@ -12,6 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {MatTabsModule} from '@angular/material/tabs';
 import { RouterLink } from '@angular/router';
 import { DialogService } from '../../core/services/dialog.service';
+import { SnackbarService } from '../../core/services/snackbar.service';
 
 @Component({
   selector: 'app-admin',
@@ -37,6 +38,7 @@ export class AdminComponent implements OnInit {
   dataSource = new MatTableDataSource<Order>([]);
   private adminService = inject(AdminService);
   private dialogService = inject(DialogService);
+  private snackbarService = inject(SnackbarService)
   orderParams = new OrderParams();
   totalItems = 0;
   statusOptions = ['All', 'PaymentReceived', 'PaymentMismatch', 'Refunded', 'Pending'];
@@ -78,11 +80,9 @@ export class AdminComponent implements OnInit {
   }
 
   refundOrder(id: string) {
-    this.adminService.refundOrder(id).then(() => {
-      console.log('Status updated successfully!');
-    })
+    this.adminService.refundOrder(id)
     .catch((error) => {
-      console.error('Error updating status:', error);
+      this.snackbarService.error(error);
     });
   }
 }

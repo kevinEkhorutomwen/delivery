@@ -11,7 +11,7 @@ export const adminGuard: CanActivateFn = (route, state) => {
   if (accountService.isAdmin()) {
     return true;
   } else {
-    snack.error('Kein Admin berechtigung');
+    snack.error("Keine Admin berechtigung");
     router.navigateByUrl('/');
     return false;
   }
