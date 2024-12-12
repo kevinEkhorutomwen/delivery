@@ -15,7 +15,7 @@ import { Pagination } from '../../shared/models/pagination';
 import { FormsModule } from '@angular/forms';
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { DataImportService } from '../../core/services/import.service';
-import data from '../../../../../../Users/Kevin/Downloads/CourseAssets/CourseAssets/seed data/products.json';
+import data from '../../../../../../Users/Kevin/Downloads/CourseAssets/CourseAssets/seed data/delivery.json';
 
 @Component({
   selector: 'app-shop',
@@ -51,7 +51,7 @@ export class ShopComponent {
 
   ngOnInit() {
     this.initialiseShop();
-    // /////////this.a.importData(data, 'delivery')
+    // this.a.importData(data, 'delivery')
     //  this.a.importDataType(data, 'brand')
   }
   
